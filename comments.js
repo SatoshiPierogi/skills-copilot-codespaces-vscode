@@ -1,13 +1,31 @@
-// Create Web Server
+// Create web server
+const express = require('express');
+const app = express();
+const port = 3000;
 
+// Middleware to parse JSON bodies
+app.use(express.json());
 
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello, world!\n');
+// In-memory storage for comments
+let comments = [];
+
+// Endpoint to get all comments
+app.get('/comments', (req, res) => {
+    res.json(comments);
 });
 
-const port = 3000;
-server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
-}); 
+// Endpoint to add a new comment
+app.post('/comments', (req, res) => {
+    const comment = req.body;
+    if (comment && comment.text) {
+        comments.push(comment);
+        res.status(201).json({ message: 'Comment added successfully' });
+    } else {
+        res.status(400).json({ message: 'Invalid comment format' });
+    }
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Comments server running at http://localhost:${port}`);
+});
